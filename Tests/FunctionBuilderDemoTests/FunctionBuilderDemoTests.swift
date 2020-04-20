@@ -22,9 +22,8 @@ final class FunctionBuilderDemoTests: XCTestCase {
         XCTAssertEqual(builder(), result)
     }
     
-    /// .empty
     func testSingle() {
-        let result = ".single(a)"
+        let result = ".single(.s(a))"
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             "a"
         }
