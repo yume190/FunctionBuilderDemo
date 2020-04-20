@@ -5,13 +5,20 @@ func buildString(_ isPass: Bool = false, @StringBuilder _ build: (Bool) -> Strin
     return build(isPass)
 }
 
+#if swift(>=5.3)
+func buildResult(_ str: String) -> String {
+    return ".result(\(str))"
+}
+#else
+func buildResult(_ str: String) -> String {
+    return str
+}
 
+#endif
 final class FunctionBuilderDemoTests: XCTestCase {
-
-    
     /// .empty
     func testEmpty() {
-        let result = ".empty"
+        let result = buildResult(".empty")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             
         }
@@ -23,7 +30,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     }
     
     func testSingle() {
-        let result = ".single(.s(a))"
+        let result = buildResult(".single(.s(a))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             "a"
         }
@@ -36,7 +43,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     
     /// .[.s(a), .s(b)]
     func testMulti() {
-        let result = "[.s(a), .s(b)]"
+        let result = buildResult("[.s(a), .s(b)]")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             "a"
             "b"
@@ -55,7 +62,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
         let f: Float = 2
         let d: Double = 3
         let s: String = "4"
-        let result = "[.i(1), .f(2.0), .d(3.0), .s(4)]"
+        let result = buildResult("[.i(1), .f(2.0), .d(3.0), .s(4)]")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             i
             f
@@ -74,10 +81,10 @@ final class FunctionBuilderDemoTests: XCTestCase {
     
     
     func testIfTrueEmpty() {
-        let result = ".single(.if(.empty))"
+        let result = buildResult(".single(.if(.empty))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             if isPass {
-        
+                
             }
         }
         let closure = buildString(true) { isPass -> String in
@@ -90,7 +97,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     }
     
     func testIfTrueSingle() {
-        let result = ".single(.if(.single(.s(a))))"
+        let result = buildResult(".single(.if(.single(.s(a))))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             if isPass {
                 "a"
@@ -106,7 +113,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     }
     
     func testIfTrueMulti() {
-        let result = ".single(.if([.s(a), .s(b)]))"
+        let result = buildResult(".single(.if([.s(a), .s(b)]))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             if isPass {
                 "a"
@@ -124,7 +131,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     }
     
     func testIfFalse() {
-        let result = ".single(.if(nil))"
+        let result = buildResult(".single(.if(nil))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             if isPass {
                 "a"
@@ -141,7 +148,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     
     func testIfFalse2() {
         let i = 1
-        let result = ".single(.right(.right(.single(.s(d)))"
+        let result = buildResult(".single(.right(.right(.single(.s(d)))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             if isPass {
                 "a"
@@ -169,7 +176,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     }
     
     func testDoSingle() {
-        let result = ".single(.do(.single(.s(a))))"
+        let result = buildResult(".single(.do(.single(.s(a))))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             do {
                 "a"
@@ -185,7 +192,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
     }
     
     func testDoMulti() {
-        let result = ".single(.do([.i(1), .s(a)]))"
+        let result = buildResult(".single(.do([.i(1), .s(a)]))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
             do {
                 1
@@ -202,8 +209,18 @@ final class FunctionBuilderDemoTests: XCTestCase {
         XCTAssertEqual(builder(), result)
     }
     
-
+    
     static var allTests = [
         ("testExample", testEmpty),
+        ("testSingle", testSingle),
+        ("testMulti", testMulti),
+        ("testExpression", testExpression),
+        ("testIfTrueEmpty", testIfTrueEmpty),
+        ("testIfTrueSingle", testIfTrueSingle),
+        ("testIfTrueMulti", testIfTrueMulti),
+        ("testIfFalse", testIfFalse),
+        ("testIfFalse2", testIfFalse2),
+        ("testDoSingle", testDoSingle),
+        ("testDoMulti", testDoMulti),
     ]
 }

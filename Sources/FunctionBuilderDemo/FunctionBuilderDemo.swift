@@ -51,4 +51,10 @@ public struct StringBuilder {
     public static func buildDo(_ value: String) -> String {
         return ".do(\(value))"
     }
+    
+    ///
+    public static func buildFinalResult(_ value: String) -> String {
+        return ".result(\(value))"
+    }
+    
 }
