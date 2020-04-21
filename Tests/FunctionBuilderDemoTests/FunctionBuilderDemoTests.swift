@@ -13,8 +13,8 @@ func buildResult(_ str: String) -> String {
 func buildResult(_ str: String) -> String {
     return str
 }
-
 #endif
+
 final class FunctionBuilderDemoTests: XCTestCase {
     /// .empty
     func testEmpty() {
@@ -29,6 +29,7 @@ final class FunctionBuilderDemoTests: XCTestCase {
         XCTAssertEqual(builder(), result)
     }
     
+    #if swift(>=5.3)
     func testSingle() {
         let result = buildResult(".single(.s(a))")
         @StringBuilder func builder(_ isPass: Bool = false) -> String {
@@ -40,6 +41,21 @@ final class FunctionBuilderDemoTests: XCTestCase {
         XCTAssertEqual(closure, result)
         XCTAssertEqual(builder(), result)
     }
+    #else
+    /// .single(.s(a))
+    ///  * closure a
+    ///  * function .single(a)
+    func testSingle() {
+        @StringBuilder func builder(_ isPass: Bool = false) -> String {
+            "a"
+        }
+        let closure = buildString { _ -> String in
+            "a"
+        }
+        XCTAssertEqual(closure, "a")
+        XCTAssertEqual(builder(), ".single(a)")
+    }
+    #endif
     
     /// .[.s(a), .s(b)]
     func testMulti() {
